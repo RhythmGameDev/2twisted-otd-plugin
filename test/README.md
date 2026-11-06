@@ -26,6 +26,9 @@ Always run the daemon on **scratch settings**, never your own:
   `<that folder>\OpenTabletDriver`. (0.6.0.4 also needs the .NET 6 runtime; `DOTNET_ROLL_FORWARD=Major` runs it on a
   newer one.)
 
+To try the board as a file (as macOS and Linux keep it) on Windows, set `TW_PEN_BOARD` to the same file path for
+the daemon and the game.
+
 To try the relative output mode, give one profile `TwoTwisted.OtdPlugin.TwoTwistedRelativeMode` instead.
 
 The scratch folder needs `Plugins/TwoTwistedPen/TwoTwistedPen.dll`,

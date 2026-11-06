@@ -9,6 +9,9 @@ tablet a cursor of its own, like two mice.
 
 ## Install
 
+Works on **Windows, macOS and Linux**: the plugin is one .NET file with no native code, so the same
+`TwoTwistedPen.zip` installs on all three.
+
 1. Use OpenTabletDriver **0.6.0.4 or newer** (the current 0.6.8.1 is recommended).
 2. Build or download `TwoTwistedPen.zip`.
 3. In OpenTabletDriver: **Plugins → Plugin Manager → Install plugin from file…**, pick `TwoTwistedPen.zip`, and
@@ -38,8 +41,9 @@ tablet a cursor of its own, like two mice.
 - **Two tablets of the same model** look like one tablet to OpenTabletDriver 0.6: it only detects the first one
   (upstream issue OpenTabletDriver#1666). Use two different models. Two identical tablets need a change to the
   driver itself.
-- Not yet tried on real tablets. It has been run end to end with two made-up tablets through real OpenTabletDriver
-  0.6.0.4 and 0.6.8.1 daemons into the game (see `test/`). OpenTabletDriver's log says `Pen board open` once the
+- Not yet tried on real tablets, nor on macOS or Linux. It has been run end to end on Windows with two made-up
+  tablets through real OpenTabletDriver 0.6.0.4 and 0.6.8.1 daemons into the game (see `test/`), with the board
+  both as Windows shared memory and as a file (the way macOS and Linux keep it). OpenTabletDriver's log says `Pen board open` once the
   plugin has reached the board. If it does not work, start the game with the environment variable
   `TW_PEN_TRACE=1` and send the `[PenBridge]` lines from its log.
 
@@ -54,8 +58,19 @@ from 0.6.0.4 on) and writes `dist/TwoTwistedPen.zip`.
 
 ## The board
 
-On Windows the named shared memory `Local\2TwistedPens` (this login session; made by whichever of OpenTabletDriver
-and the game starts first). Elsewhere the file `<temp>/2twisted-pens.shm`, since .NET maps names only on Windows.
+Where the plugin and the game meet:
+
+| System | Location |
+| --- | --- |
+| Windows | named shared memory `Local\2TwistedPens` (this login session; made by whichever of OpenTabletDriver and the game starts first) |
+| Linux | `$XDG_RUNTIME_DIR/2twisted-pens.shm` (the session's runtime folder, in memory); without one, `/dev/shm/2twisted-pens-<user>.shm` |
+| macOS | `2twisted-pens.shm` in the user's temporary folder (`$TMPDIR`) |
+
+.NET names shared memory only on Windows, so on macOS and Linux both sides map the same file (on Linux that folder
+is memory, not disk). If the game or the driver runs sandboxed (Flatpak, Snap) and cannot see the other's folder,
+set the environment variable **`TW_PEN_BOARD`** to the same file path for both: it overrides the location on any
+system.
+
 4160 bytes, little-endian. The game's reader is `scripts/Input/PenBridgeSource.cs` in the 2Twisted repository;
 `src/PenBoard.cs` here is the writer, and the two must agree byte for byte.
 

@@ -11,7 +11,7 @@
     <RootNamespace>TwoTwisted.OtdPlugin</RootNamespace>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <!-- OpenTabletDriver supplies its own copy at run time; the plugin folder holds this dll only. -->
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

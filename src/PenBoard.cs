@@ -13,9 +13,16 @@ namespace TwoTwisted.OtdPlugin
     // been mapped; the game reads every slot once a frame, at the same point it reads the mice. No socket, no
     // port, nothing a firewall is asked about.
     //
-    // WHERE: on Windows the named mapping "Local\2TwistedPens" (this login session; created by whichever of the
-    // two starts first, gone when both have closed). Elsewhere, a file of the same layout in the temporary folder
-    // (2twisted-pens.shm), since .NET maps names only on Windows.
+    // WHERE (BoardPath; the game's PenBridgeSource.BoardPath is the same rule, and the two must agree):
+    //   Windows  the named mapping "Local\2TwistedPens" (this login session; created by whichever of the two starts
+    //            first, gone when both have closed).
+    //   Linux    $XDG_RUNTIME_DIR/2twisted-pens.shm: the per-user runtime folder every desktop session has, kept in
+    //            memory (tmpfs). Without one, /dev/shm/2twisted-pens-<user>.shm, also memory.
+    //   macOS    2twisted-pens.shm in the per-user temporary folder ($TMPDIR), which every program of the same
+    //            user gets.
+    //   Anywhere the environment variable TW_PEN_BOARD, a file path, overrides all of it, set the same for the
+    //            driver and the game (a sandboxed game, say, whose folders are not the driver's).
+    // .NET names a mapping only on Windows, so elsewhere both sides map the same FILE; on tmpfs that is memory.
     //
     // THE LAYOUT (little-endian; the game's reader is scripts/Input/PenBridgeSource.cs in the 2Twisted repository,
     // and the two must agree byte for byte):
@@ -105,14 +112,28 @@ namespace TwoTwisted.OtdPlugin
             }
         }
 
-        private static string Where => RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? WindowsName : Path.Combine(Path.GetTempPath(), FileName);
+        private static string Where => BoardPath() ?? WindowsName;
+
+        // The board's file, or null for Windows' named mapping. See WHERE above.
+        public static string? BoardPath()
+        {
+            string? over = Environment.GetEnvironmentVariable("TW_PEN_BOARD");
+            if (!string.IsNullOrWhiteSpace(over)) return over.Trim();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                string? run = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");
+                if (!string.IsNullOrWhiteSpace(run) && Directory.Exists(run)) return Path.Combine(run, FileName);
+                if (Directory.Exists("/dev/shm")) return Path.Combine("/dev/shm", $"2twisted-pens-{Environment.UserName}.shm");
+            }
+            return Path.Combine(Path.GetTempPath(), FileName);
+        }
 
         private static MemoryMappedFile OpenMap()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            string? path = BoardPath();
+            if (path == null)
                 return MemoryMappedFile.CreateOrOpen(WindowsName, Size, MemoryMappedFileAccess.ReadWrite);
-            var path = Path.Combine(Path.GetTempPath(), FileName);
             var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             if (fs.Length < Size) fs.SetLength(Size);
             return MemoryMappedFile.CreateFromFile(fs, null, Size, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, leaveOpen: false);
