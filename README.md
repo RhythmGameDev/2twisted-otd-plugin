@@ -14,10 +14,13 @@ Works on **Windows, macOS and Linux**: the plugin is one .NET file with no nativ
 
 1. Use OpenTabletDriver **0.6.0.4 or newer** (the current 0.6.8.1 is recommended).
 2. Build or download `TwoTwistedPen.zip`.
-3. In OpenTabletDriver: **Plugins → Plugin Manager → Install plugin from file…**, pick `TwoTwistedPen.zip`, and
-   restart the driver.
-4. For **each** tablet (the tablet list at the top of the OpenTabletDriver window), set **Output Mode** to one of:
-   - **2Twisted (one cursor per tablet)**: absolute, like Absolute Mode.
+3. In OpenTabletDriver, open **Plugins → Plugin Manager** and **drag and drop `TwoTwistedPen.zip`** onto it. Drop the
+   zip itself: do not unzip it or drop the `.dll`. Then restart the driver. (On Linux, where OpenTabletDriver has no
+   drag and drop, use the Plugin Manager's **Install plugin…** menu item, Ctrl+O, and pick the zip.)
+4. For **each** tablet, pick it in the tablet drop-down at the **bottom left** of the OpenTabletDriver window and set
+   its **Output Mode** to one of:
+   - **2Twisted (one cursor per tablet)**: absolute, like Absolute Mode. Each tablet has its own **Tablet area** and
+     **Display area**, set as usual.
    - **2Twisted relative (one cursor per tablet)**: like Relative Mode, the pen pushes its cursor the way a mouse
      does.
 5. In 2Twisted: **Settings → Input → Pens from OpenTabletDriver** is on by default. Its status line names every
