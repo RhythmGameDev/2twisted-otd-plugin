@@ -32,8 +32,6 @@ tablet a cursor of its own, like two mice.
   is still a click.
 - **Nothing reaches the desktop** while a tablet is on one of these modes. Switch it back to Absolute or Relative
   Mode to use the pen anywhere else.
-- **No network.** The plugin and the game meet in shared memory: no port, no socket, nothing the firewall is asked
-  about.
 
 ## Limits
 
