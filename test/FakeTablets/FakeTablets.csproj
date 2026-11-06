@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    TEST ONLY, never shipped: two made-up tablets for OpenTabletDriver 0.6.0.4 to 0.6.8.1, so the whole chain (tablet ->
+    OpenTabletDriver -> the 2Twisted output mode -> the game) can be run without any tablet on the desk.
+    See test/README.md.
+  -->
+  <PropertyGroup>
+    <!-- net6.0 for OpenTabletDriver 0.6.0.4 (the oldest the output mode supports), net10.0 for 0.6.8.1. -->
+    <TargetFrameworks>net6.0;net10.0</TargetFrameworks>
+    <NoWarn>$(NoWarn);CS8766;CS8767;CS8613</NoWarn>
+    <AssemblyName>TwoTwistedFakeTablets</AssemblyName>
+    <RootNamespace>TwoTwisted.FakeTablets</RootNamespace>
+    <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTabletDriver.Plugin" Version="0.6.0.4" ExcludeAssets="runtime" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net6.0'" />
+    <PackageReference Include="OpenTabletDriver.Plugin" Version="0.6.8" ExcludeAssets="runtime" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net10.0'" />
+  </ItemGroup>
+
+</Project>

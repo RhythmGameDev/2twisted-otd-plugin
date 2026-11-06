@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The 2Twisted output mode for OpenTabletDriver. Built against the OLDEST plugin library it needs (0.6.0.4,
+    net6.0) so one build loads in every 0.6 release from 0.6.0.4 to 0.6.8.1: a net10 host loads a net6
+    assembly, and the plugin API this uses is the same in all of them.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>TwoTwistedPen</AssemblyName>
+    <RootNamespace>TwoTwisted.OtdPlugin</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Version>0.1.0</Version>
+    <!-- OpenTabletDriver supplies its own copy at run time; the plugin folder holds this dll only. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTabletDriver.Plugin" Version="0.6.0.4" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
