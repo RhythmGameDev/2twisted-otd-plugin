@@ -26,6 +26,8 @@ Always run the daemon on **scratch settings**, never your own:
   `<that folder>\OpenTabletDriver`. (0.6.0.4 also needs the .NET 6 runtime; `DOTNET_ROLL_FORWARD=Major` runs it on a
   newer one.)
 
+To try the relative output mode, give one profile `TwoTwisted.OtdPlugin.TwoTwistedRelativeMode` instead.
+
 The scratch folder needs `Plugins/TwoTwistedPen/TwoTwistedPen.dll`,
 `Plugins/TwoTwistedFakeTablets/TwoTwistedFakeTablets.dll` (the `net6.0` build for 0.6.0.4, `net10.0` for 0.6.8.1),
 and a `settings.json` whose profiles for `Gaomon S56K` and `Artisul AP604` already use
