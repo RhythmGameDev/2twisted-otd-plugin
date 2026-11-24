@@ -52,7 +52,9 @@ namespace TwoTwisted.FakeTablets
                 _hub = new FakeHub();
                 composite.ConnectDeviceHub(_hub);
                 _hub.PlugIn();
-                Log.Write("FakeTablets", "Two fake tablets connected (Gaomon S56K, Artisul AP604). Waiting for "
+                Log.Write("FakeTablets", (FakeHub.Identical
+                        ? "Two identical fake tablets connected (Gaomon S56K x2). Waiting for "
+                        : "Two fake tablets connected (Gaomon S56K, Artisul AP604). Waiting for ")
                     + (Environment.GetEnvironmentVariable("FAKE_TABLETS_GO") ?? "(FAKE_TABLETS_GO not set)"));
             }
             return true;
@@ -65,11 +67,21 @@ namespace TwoTwisted.FakeTablets
 
     internal sealed class FakeHub : IDeviceHub
     {
-        private readonly IDeviceEndpoint[] _devices =
-        {
-            new FakeTablet("Gaomon S56K (fake)", 9580, 109, 8, 32000, 24000, 2047, left: true),
-            new FakeTablet("Artisul AP604 (fake)", 21827, 84, 64, 15900, 9930, 2047, left: false, usbInterface: "1"),
-        };
+        // FAKE_TABLETS_IDENTICAL=1: two of the SAME tablet (two Gaomon S56K on two device paths), for the
+        // 2Twisted OpenTabletDriver fork, which tells identical tablets apart. Stock 0.6 sees only the first.
+        internal static bool Identical => Environment.GetEnvironmentVariable("FAKE_TABLETS_IDENTICAL") == "1";
+
+        private readonly IDeviceEndpoint[] _devices = Identical
+            ? new IDeviceEndpoint[]
+            {
+                new FakeTablet("Gaomon S56K (fake 1)", 9580, 109, 8, 32000, 24000, 2047, left: true, instance: "1"),
+                new FakeTablet("Gaomon S56K (fake 2)", 9580, 109, 8, 32000, 24000, 2047, left: false, instance: "2"),
+            }
+            : new IDeviceEndpoint[]
+            {
+                new FakeTablet("Gaomon S56K (fake)", 9580, 109, 8, 32000, 24000, 2047, left: true),
+                new FakeTablet("Artisul AP604 (fake)", 21827, 84, 64, 15900, 9930, 2047, left: false, usbInterface: "1"),
+            };
         private IDeviceEndpoint[] _current = Array.Empty<IDeviceEndpoint>();
 
         public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
@@ -90,7 +102,7 @@ namespace TwoTwisted.FakeTablets
         private readonly bool _left;
 
         public FakeTablet(string name, int vid, int pid, int reportLength, int maxX, int maxY, int maxPressure, bool left,
-            string? usbInterface = null)
+            string? usbInterface = null, string? instance = null)
         {
             if (usbInterface != null) DeviceAttributes["USB_INTERFACE_NUMBER"] = usbInterface;
             ProductName = FriendlyName = name;
@@ -101,7 +113,7 @@ namespace TwoTwisted.FakeTablets
             _maxY = maxY;
             _maxPressure = maxPressure;
             _left = left;
-            DevicePath = $"fake://2twisted/{vid:X4}:{pid:X4}";
+            DevicePath = $"fake://2twisted/{vid:X4}:{pid:X4}" + (instance != null ? "/" + instance : "");
         }
 
         public int ProductID { get; }
