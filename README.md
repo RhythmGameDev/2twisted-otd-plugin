@@ -12,8 +12,10 @@ tablet a cursor of its own, like two mice.
 Works on **Windows, macOS and Linux**: the plugin is one .NET file with no native code, so the same
 `TwoTwistedPen.zip` installs on all three.
 
-1. Use OpenTabletDriver **0.6.0.4 or newer** (the current 0.6.8.1 is recommended).
-2. Build or download `TwoTwistedPen.zip`.
+1. Use OpenTabletDriver **0.6.0.4 or newer** (the current 0.6.8.1 is recommended). For **two tablets of the same
+   model**, use the [2Twisted fork of OpenTabletDriver](https://github.com/RhythmGameDev/2twisted-otd-fork/releases/latest)
+   instead (see Limits).
+2. Download `TwoTwistedPen.zip` from this repo's [latest release](https://github.com/RhythmGameDev/2twisted-otd-plugin/releases/latest), or build it.
 3. In OpenTabletDriver, open **Plugins → Plugin Manager** and **drag and drop `TwoTwistedPen.zip`** onto it. Drop the
    zip itself: do not unzip it or drop the `.dll`. Then restart the driver. (On Linux, where OpenTabletDriver has no
    drag and drop, use the Plugin Manager's **Install plugin…** menu item, Ctrl+O, and pick the zip.)
@@ -42,8 +44,9 @@ Works on **Windows, macOS and Linux**: the plugin is one .NET file with no nativ
 ## Limits
 
 - **Two tablets of the same model** look like one tablet to OpenTabletDriver 0.6: it only detects the first one
-  (upstream issue OpenTabletDriver#1666). Use two different models. Two identical tablets need a change to the
-  driver itself.
+  (upstream issue OpenTabletDriver#1666). Use two different models, or the
+  [2Twisted fork of OpenTabletDriver](https://github.com/RhythmGameDev/2twisted-otd-fork/releases/latest), which
+  shows the second one as `Name (2)` with its own profile. This plugin works the same on the fork.
 - Not yet tried on real tablets, nor on macOS or Linux. It has been run end to end on Windows with two made-up
   tablets through real OpenTabletDriver 0.6.0.4 and 0.6.8.1 daemons into the game (see `test/`), with the board
   both as Windows shared memory and as a file (the way macOS and Linux keep it). OpenTabletDriver's log says `Pen board open` once the
